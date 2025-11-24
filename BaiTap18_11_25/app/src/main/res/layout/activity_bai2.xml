@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="#F7F3FF">
+
+    <!-- HEADER Gmail -->
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#D32F2F"
+            android:elevation="4dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+        <!-- Icon Menu -->
+        <ImageView
+                android:id="@+id/imgMenu"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_centerVertical="true"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:tint="#FFFFFF" />
+
+        <!-- Title -->
+        <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inbox"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/imgMenu"
+                android:layout_marginStart="20dp" />
+
+        <!-- Search Icon -->
+        <ImageView
+                android:id="@+id/imgSearch"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@android:drawable/ic_menu_search"
+                android:tint="#FFFFFF"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <!-- LISTVIEW GMAIL -->
+    <ListView
+            android:id="@+id/listEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#DDDDDD"
+            android:dividerHeight="1dp" />
+
+</LinearLayout>

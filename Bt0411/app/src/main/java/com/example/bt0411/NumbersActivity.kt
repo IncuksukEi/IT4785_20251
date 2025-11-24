@@ -25,10 +25,10 @@ class NumbersActivity : AppCompatActivity() {
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
         binding.lvNumbers.adapter = adapter
 
-        // Chỉ cho phép chọn 1 trong 6 radio (2 nhóm)
-        makeMutuallyExclusive(binding.rgRow1, binding.rgRow2)
+        // Đảm bảo chỉ chọn 1 RadioButton trong cả 2 nhóm
+        setupExclusiveRadioGroups()
 
-        // Sự kiện thay đổi
+        // Khi thay đổi giá trị nhập
         binding.etLimit.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -37,30 +37,29 @@ class NumbersActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        val listener = RadioGroup.OnCheckedChangeListener { _, _ -> updateList() }
-        binding.rgRow1.setOnCheckedChangeListener(listener)
-        binding.rgRow2.setOnCheckedChangeListener(listener)
-
-        // Khởi tạo
+        // Khởi tạo danh sách ban đầu
         updateList()
     }
 
-    private fun makeMutuallyExclusive(groupA: RadioGroup, groupB: RadioGroup) {
+    /** Xử lý chỉ cho phép chọn 1 trong 6 RadioButton **/
+    private fun setupExclusiveRadioGroups() {
         var lock = false
-        val listenerA = RadioGroup.OnCheckedChangeListener { _, checkedId ->
+        val listener = RadioGroup.OnCheckedChangeListener { group, checkedId ->
             if (lock) return@OnCheckedChangeListener
             lock = true
-            if (checkedId != -1) groupB.clearCheck()
+
+            // Khi chọn 1 nhóm, nhóm còn lại bỏ chọn
+            if (group == binding.rgRow1 && checkedId != -1) {
+                binding.rgRow2.clearCheck()
+            } else if (group == binding.rgRow2 && checkedId != -1) {
+                binding.rgRow1.clearCheck()
+            }
+
+            updateList()
             lock = false
         }
-        val listenerB = RadioGroup.OnCheckedChangeListener { _, checkedId ->
-            if (lock) return@OnCheckedChangeListener
-            lock = true
-            if (checkedId != -1) groupA.clearCheck()
-            lock = false
-        }
-        groupA.setOnCheckedChangeListener(listenerA)
-        groupB.setOnCheckedChangeListener(listenerB)
+        binding.rgRow1.setOnCheckedChangeListener(listener)
+        binding.rgRow2.setOnCheckedChangeListener(listener)
     }
 
     private fun parseLimit(): Int? {
@@ -71,12 +70,12 @@ class NumbersActivity : AppCompatActivity() {
     private fun updateList() {
         val n = parseLimit() ?: 0
         val list = when (selectedType()) {
-            Type.ODD      -> oddsLessThan(n)
-            Type.EVEN     -> evensLessThan(n)
-            Type.PRIME    -> primesLessThan(n)
-            Type.SQUARE   -> squaresLessThan(n)
-            Type.PERFECT  -> perfectsLessThan(n)
-            Type.FIBO     -> fiboLessThan(n)
+            Type.ODD -> oddsLessThan(n)
+            Type.EVEN -> evensLessThan(n)
+            Type.PRIME -> primesLessThan(n)
+            Type.SQUARE -> squaresLessThan(n)
+            Type.PERFECT -> perfectsLessThan(n)
+            Type.FIBO -> fiboLessThan(n)
         }
 
         adapter.clear()
@@ -91,17 +90,17 @@ class NumbersActivity : AppCompatActivity() {
 
     private fun selectedType(): Type {
         return when {
-            binding.rbOdd.isChecked     -> Type.ODD
-            binding.rbEven.isChecked    -> Type.EVEN
-            binding.rbPrime.isChecked   -> Type.PRIME
-            binding.rbSquare.isChecked  -> Type.SQUARE
+            binding.rbOdd.isChecked -> Type.ODD
+            binding.rbEven.isChecked -> Type.EVEN
+            binding.rbPrime.isChecked -> Type.PRIME
+            binding.rbSquare.isChecked -> Type.SQUARE
             binding.rbPerfect.isChecked -> Type.PERFECT
-            else                        -> Type.FIBO
+            else -> Type.FIBO
         }
     }
 
     /*----------------- Bộ sinh các dãy số (< n) ------------------*/
-    private fun oddsLessThan(n: Int)  = (1 until n step 2).toList()
+    private fun oddsLessThan(n: Int) = (1 until n step 2).toList()
 
     private fun evensLessThan(n: Int): List<Int> {
         if (n <= 2) return emptyList()
