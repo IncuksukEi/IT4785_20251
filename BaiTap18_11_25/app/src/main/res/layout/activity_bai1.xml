@@ -2,50 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:padding="16dp">
-
-    <EditText
-            android:id="@+id/edtMSSV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Mã số sinh viên"
-            android:padding="12dp" />
-
-    <EditText
-            android:id="@+id/edtName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Họ tên"
-            android:padding="12dp"
-            android:layout_marginTop="12dp"/>
-
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-        <Button
-                android:id="@+id/btnAdd"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="Add"
-                android:layout_height="wrap_content"/>
-
-        <Button
-                android:id="@+id/btnUpdate"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:text="Update"
-                android:layout_marginStart="12dp"
-                android:layout_height="wrap_content"/>
-    </LinearLayout>
+              android:fitsSystemWindows="true"
+              android:orientation="vertical">
 
     <ListView
-            android:id="@+id/listViewSV"
+            android:id="@+id/listViewBai1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="12dp" />
-
+            android:layout_height="match_parent" />
 </LinearLayout>

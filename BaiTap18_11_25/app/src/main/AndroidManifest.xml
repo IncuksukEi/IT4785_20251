@@ -11,21 +11,34 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.BaiTap18_11_25">
+
         <activity
                 android:name=".Bai3Activity"
                 android:exported="false"/>
+
         <activity
                 android:name=".Bai2Activity"
                 android:exported="false"/>
+
         <activity
                 android:name=".Bai1Activity"
                 android:exported="false"/>
+
+        <activity
+                android:name=".Bai1AddActivity"
+                android:exported="false"
+                android:label="Thêm Sinh Viên" />
+
+        <activity
+                android:name=".Bai1DetailActivity"
+                android:exported="false"
+                android:label="Chi Tiết Sinh Viên" />
+
         <activity
                 android:name=".MainActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

@@ -1,108 +1,103 @@
 package com.example.baitap18_11_25
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class Bai1Activity : AppCompatActivity() {
 
-    // MODEL
-    data class SinhVien(var mssv: String, var name: String)
-
-    // ADAPTER
-    class SinhVienAdapter(
-        private val context: Bai1Activity,
-        private val list: ArrayList<SinhVien>
-    ) : BaseAdapter() {
-
-        override fun getCount() = list.size
-        override fun getItem(position: Int) = list[position]
-        override fun getItemId(position: Int) = position.toLong()
-
+    // --- Adapter Nội Bộ ---
+    class SinhVienAdapter(val ctx: Bai1Activity, val data: ArrayList<SinhVien>) : BaseAdapter() {
+        override fun getCount() = data.size
+        override fun getItem(i: Int) = data[i]
+        override fun getItemId(i: Int) = i.toLong()
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = convertView ?: LayoutInflater.from(context)
-                .inflate(R.layout.item_bai1, parent, false)
+            val view = convertView ?: LayoutInflater.from(ctx).inflate(R.layout.item_bai1, parent, false)
 
+            // Theo đề bài: List chỉ hiện MSSV và Tên
             val txtName = view.findViewById<TextView>(R.id.txtName)
             val txtMssv = view.findViewById<TextView>(R.id.txtMSSV)
             val imgDelete = view.findViewById<ImageView>(R.id.imgDelete)
 
-            val sv = list[position]
+            val sv = data[position]
             txtName.text = sv.name
             txtMssv.text = sv.mssv
 
             imgDelete.setOnClickListener {
-                list.removeAt(position)
+                data.removeAt(position)
                 notifyDataSetChanged()
             }
-
             return view
         }
     }
 
     private val listSV = ArrayList<SinhVien>()
     private lateinit var adapter: SinhVienAdapter
-    private var selectedIndex = -1
+
+    // 1. Launcher để nhận kết quả khi Thêm mới
+    private val launcherAdd = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val newSV = result.data?.getSerializableExtra("KEY_SV_NEW") as? SinhVien
+            if (newSV != null) {
+                listSV.add(newSV)
+                adapter.notifyDataSetChanged()
+                Toast.makeText(this, "Đã thêm mới!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // 2. Launcher để nhận kết quả khi Sửa/Chi tiết
+    private val launcherEdit = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedSV = result.data?.getSerializableExtra("KEY_SV_UPDATED") as? SinhVien
+            val pos = result.data?.getIntExtra("KEY_POS_UPDATED", -1) ?: -1
+
+            if (updatedSV != null && pos != -1) {
+                listSV[pos] = updatedSV
+                adapter.notifyDataSetChanged()
+                Toast.makeText(this, "Đã cập nhật!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bai1)
 
-        val listView = findViewById<ListView>(R.id.listViewSV)
-        val edtMSSV = findViewById<EditText>(R.id.edtMSSV)
-        val edtName = findViewById<EditText>(R.id.edtName)
-        val btnAdd = findViewById<Button>(R.id.btnAdd)
-        val btnUpdate = findViewById<Button>(R.id.btnUpdate)
+        // Dữ liệu mẫu
+        listSV.add(SinhVien("20201234", "Nguyễn Văn A", "0909123456", "Hà Nội"))
+        listSV.add(SinhVien("20205678", "Trần Thị B", "0912345678", "Đà Nẵng"))
 
-        listSV.add(SinhVien("20200001", "Nguyễn Văn A"))
-        listSV.add(SinhVien("20200002", "Trần Thị B"))
-        listSV.add(SinhVien("20200003", "Lê Văn C"))
-        listSV.add(SinhVien("20200004", "Phạm Thị D"))
-        listSV.add(SinhVien("20200005", "Hoàng Văn E"))
-        listSV.add(SinhVien("20200006", "Vũ Thị F"))
-        listSV.add(SinhVien("20200007", "Đặng Văn G"))
-        listSV.add(SinhVien("20200008", "Bùi Thị H"))
-        listSV.add(SinhVien("20200009", "Hồ Văn I"))
-
+        val lv = findViewById<ListView>(R.id.listViewBai1)
         adapter = SinhVienAdapter(this, listSV)
-        listView.adapter = adapter
+        lv.adapter = adapter
 
-        btnAdd.setOnClickListener {
-            val mssv = edtMSSV.text.toString()
-            val name = edtName.text.toString()
-
-            if (mssv.isBlank() || name.isBlank()) {
-                Toast.makeText(this, "Không được để trống!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            listSV.add(SinhVien(mssv, name))
-            adapter.notifyDataSetChanged()
-            edtMSSV.setText("")
-            edtName.setText("")
+        // Bắt sự kiện click vào item -> Mở màn hình Detail
+        lv.setOnItemClickListener { _, _, position, _ ->
+            val intent = Intent(this, Bai1DetailActivity::class.java)
+            intent.putExtra("KEY_SV_EDIT", listSV[position])
+            intent.putExtra("KEY_POS", position)
+            launcherEdit.launch(intent)
         }
+    }
 
-        listView.setOnItemClickListener { _, _, pos, _ ->
-            selectedIndex = pos
-            edtMSSV.setText(listSV[pos].mssv)
-            edtName.setText(listSV[pos].name)
+    // Tạo Option Menu (Nút thêm ở góc phải)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_bai1, menu)
+        return true
+    }
+
+    // Xử lý khi bấm nút thêm
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_add_bai1) {
+            val intent = Intent(this, Bai1AddActivity::class.java)
+            launcherAdd.launch(intent)
+            return true
         }
-
-        btnUpdate.setOnClickListener {
-            if (selectedIndex == -1) {
-                Toast.makeText(this, "Chọn item để cập nhật!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            listSV[selectedIndex].mssv = edtMSSV.text.toString()
-            listSV[selectedIndex].name = edtName.text.toString()
-            adapter.notifyDataSetChanged()
-
-            selectedIndex = -1
-            edtMSSV.setText("")
-            edtName.setText("")
-        }
+        return super.onOptionsItemSelected(item)
     }
 }

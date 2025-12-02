@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="20dp">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="CHI TIẾT &amp; CẬP NHẬT" android:textSize="20sp" android:textStyle="bold" android:gravity="center" android:layout_marginBottom="20dp"/>
+
+    <EditText android:id="@+id/edtDetMSSV" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="MSSV" />
+    <EditText android:id="@+id/edtDetName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Họ Tên" />
+    <EditText android:id="@+id/edtDetPhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="SĐT" android:inputType="phone"/>
+    <EditText android:id="@+id/edtDetAddress" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Địa chỉ" />
+
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp">
+        <Button android:id="@+id/btnBack" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Quay Lại" />
+        <Button android:id="@+id/btnUpdate" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Cập Nhật" android:layout_marginStart="10dp"/>
+    </LinearLayout>
+</LinearLayout>
